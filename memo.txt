@@ -1,0 +1,51 @@
+[레빗mq]
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management
+
+[Kafka 서버 기동]
+/Users/n2204005/personalGit/kafka_demo/kafka_2.13-2.7.0
+
+./bin/zookeeper-server-start.sh ./config/zookeeper.properties
+./bin/kafka-server-start.sh ./config/server.properties
+
+[Kafka Connect 실행]
+./bin/connect-distributed ./etc/kafka/connect-distributed.properties
+
+[토픽 리스트 확인]
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+[토픽 상세 확인]
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic quickstart-events
+
+[토픽 생성]
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic quickstart-events --partitions 1
+
+[메시지 생성]
+./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic quickstart-events
+
+[메시지 구독]
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic quickstart-events --from-beginning
+
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my_topic_users --from-beginning
+
+
+[zipkin 실행]
+java -jar zipkin.jar
+
+
+
+echo '
+{
+"name" : "my-source-connect",
+"config" : {
+"connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector",
+"connection.url":"jdbc:mysql://localhost:3306/mydb",
+"connection.user":"root",
+"connection.password":"",
+"mode": "incrementing",
+"incrementing.column.name" : "id",
+"table.whitelist":"users",
+"topic.prefix" : "my_topic_",
+"tasks.max" : "1"
+}
+}
+' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"

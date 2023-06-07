@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+
+token:
+  expiration_time: 86400000
+  secret: my_token_default
+
+gateway:
+  ip: 127.0.0.1
+
+
+order_service:
+  url: http://order-service/order-service/%s/orders
+  exception:
+    orders_is_empty: User's orders is empty.
